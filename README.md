@@ -163,20 +163,22 @@ cp .env.example .env
 docker-compose up -d
 ```
 
-### 4. Instale as dependências e rode a API
+### 4. Instale as dependências (raiz do monorepo)
 
 ```bash
-cd api
 npm install
-npm run dev
 ```
 
-### 5. Instale as dependências e rode o frontend
+### 5. Rode a API
 
 ```bash
-cd web
-npm install
-npm run dev
+npm run dev:api
+```
+
+### 6. Rode o frontend
+
+```bash
+npm run dev:web
 ```
 
 A API estará disponível em `http://localhost:3333` e o frontend em `http://localhost:5173`.
