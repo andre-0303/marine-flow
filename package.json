@@ -2,20 +2,17 @@
   "name": "marine-flow",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "api",
-    "web"
-  ],
   "scripts": {
-    "dev:api": "npm run dev -w api",
-    "dev:web": "npm run dev -w web",
-    "build:api": "npm run build -w api",
-    "build:web": "npm run build -w web",
-    "build": "npm run build -w api && npm run build -w web",
-    "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "dev:api": "pnpm --filter @marine-flow/api dev",
+    "dev:web": "pnpm --filter @marine-flow/web dev",
+    "build:api": "pnpm --filter @marine-flow/api build",
+    "build:web": "pnpm --filter @marine-flow/web build",
+    "build": "pnpm --filter @marine-flow/api build && pnpm --filter @marine-flow/web build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=18",
+    "pnpm": ">=9"
   }
 }

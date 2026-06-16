@@ -142,6 +142,7 @@ status                pollution_density            explanation
 ### Pré-requisitos
 
 - [Node.js 18+](https://nodejs.org/)
+- [pnpm 9+](https://pnpm.io/)
 - [Docker](https://www.docker.com/) e Docker Compose
 
 ### 1. Clone o repositório
@@ -166,19 +167,19 @@ docker-compose up -d
 ### 4. Instale as dependências (raiz do monorepo)
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 5. Rode a API
 
 ```bash
-npm run dev:api
+pnpm dev:api
 ```
 
 ### 6. Rode o frontend
 
 ```bash
-npm run dev:web
+pnpm dev:web
 ```
 
 A API estará disponível em `http://localhost:3333` e o frontend em `http://localhost:5173`.
