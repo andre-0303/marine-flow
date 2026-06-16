@@ -1,5 +1,6 @@
 <div align="center">
-  <h1>🌊 MarineFlow</h1>
+  <img width="300" alt="image" src="https://github.com/user-attachments/assets/20cdb468-7d4e-4c18-a562-d03944f8c950" />
+
   <p><strong>Plataforma preditiva de monitoramento costeiro</strong></p>
   <p>Previsão de acúmulo de resíduos marinhos no litoral do Rio de Janeiro</p>
 
