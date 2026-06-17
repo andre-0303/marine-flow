@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import type { CreateSimulationInput, CreateSimulationUseCase, SimulationOutput } from '../../domain/ports/in/CreateSimulationUseCase.js'
 import type { BeachRegionRepository } from '../../domain/ports/out/BeachRegionRepository.js'
+import type { OceanConditionRepository } from '../../domain/ports/out/OceanConditionRepository.js'
 import type { PredictionRepository } from '../../domain/ports/out/PredictionRepository.js'
 import type { RiskCalculatorService } from '../../domain/services/RiskCalculatorService.js'
 import { OceanCondition } from '../../domain/entities/OceanCondition.js'
@@ -10,6 +11,7 @@ import { NotFoundError } from '../../shared/errors/NotFoundError.js'
 export class CreateSimulationUseCaseImpl implements CreateSimulationUseCase {
   constructor(
     private readonly beachRegionRepository: BeachRegionRepository,
+    private readonly oceanConditionRepository: OceanConditionRepository,
     private readonly predictionRepository: PredictionRepository,
     private readonly riskCalculatorService: RiskCalculatorService,
   ) {}
@@ -29,6 +31,8 @@ export class CreateSimulationUseCaseImpl implements CreateSimulationUseCase {
       input.pollutionDensity,
       new Date(),
     )
+
+    await this.oceanConditionRepository.save(condition)
 
     const { score, level, explanation } = this.riskCalculatorService.calculate(condition)
 
