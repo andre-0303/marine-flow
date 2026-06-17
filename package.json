@@ -1,0 +1,18 @@
+{
+  "name": "marine-flow",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm --filter @marine-flow/api dev",
+    "dev:web": "pnpm --filter @marine-flow/web dev",
+    "build:api": "pnpm --filter @marine-flow/api build",
+    "build:web": "pnpm --filter @marine-flow/web build",
+    "build": "pnpm --filter @marine-flow/api build && pnpm --filter @marine-flow/web build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}
