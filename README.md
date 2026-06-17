@@ -74,17 +74,18 @@ api/src/
 
 ## 📐 Modelagem de dados
 
-```
-beach_region          ocean_condition              prediction
-─────────────         ───────────────              ──────────
-id (PK)          ←── beach_region_id (FK)     ←── beach_region_id (FK)
-name                  id (PK)               ←──── ocean_condition_id (FK)
-latitude              wind_speed                   id (PK)
-longitude             current_strength             risk_score (0-100)
-city                  tide_level                   risk_level
-status                pollution_density            explanation
-                      created_at                   forecast_hours (24|48|72)
-                                                   created_at
+```text
+beach_region                  1 ───────────────<  ocean_condition              1 ───────────────<  prediction
+┌──────────────────────┐                         ┌─────────────────────────┐                         ┌──────────────────────┐
+│ PK id                │                         │ PK id                   │                         │ PK id                │
+│ name                 │                         │ FK beach_region_id      │                         │ FK beach_region_id   │
+│ latitude             │                         │ wind_speed              │                         │ FK ocean_condition_id│
+│ longitude            │                         │ current_strength        │                         │ risk_score (0-100)   │
+│ city                 │                         │ tide_level              │                         │ risk_level           │
+│ status               │                         │ pollution_density       │                         │ explanation          │
+└──────────────────────┘                         │ created_at              │                         │ forecast_hours       │
+                                                  └─────────────────────────┘                         │ created_at           │
+                                                                                                     └──────────────────────┘
 ```
 
 ---
@@ -99,6 +100,64 @@ status                pollution_density            explanation
 | BR-04 | Score ≥ 70 → risco **alto** 🔴 |
 | BR-05 | Maré alta **aumenta** o risco |
 | BR-06 | Correntes fortes **aumentam** a probabilidade de acúmulo |
+
+---
+
+## 🧮 Fórmula de cálculo do score
+
+```text
+score = round( windScore×0.20 + currentScore×0.30 + tideScore×0.30 + pollutionScore×0.20 )
+
+┌─────────────────────┬────────────────────────────────────────────┬────────┐
+│ Fator               │ Normalização (0–100)                       │ Peso   │
+├─────────────────────┼────────────────────────────────────────────┼────────┤
+│ windScore           │ clamp(windSpeed / 30,      0, 1) × 100    │  20%   │
+│ currentScore        │ clamp(currentStrength / 5, 0, 1) × 100    │  30%   │
+│ tideScore           │ clamp(max(0, tideLevel) / 3, 0, 1) × 100  │  30%   │
+│ pollutionScore      │ clamp(pollutionDensity / 100, 0, 1) × 100 │  20%   │
+└─────────────────────┴────────────────────────────────────────────┴────────┘
+
+Fatores com score ≥ 50 são listados na explicação gerada (máx. 2 dominantes).
+```
+
+---
+
+## 🔄 Fluxo de simulação
+
+```text
+POST /simulations
+        │
+        ▼
+┌───────────────────────┐
+│  SimulationController │  valida e adapta HTTP → domínio
+└──────────┬────────────┘
+           │
+           ▼
+┌───────────────────────────┐
+│  CreateSimulationUseCase  │  orquestra o fluxo completo
+└──┬────────────────────┬───┘
+   │                    │
+   ▼                    ▼
+┌──────────────────┐  ┌────────────────────────┐
+│ BeachRegion      │  │  RiskCalculatorService  │
+│ Repository (out) │  │  (serviço de domínio)   │
+│                  │  │  → score + level +       │
+│ findById()       │  │    explanation           │
+└──────────────────┘  └───────────┬────────────┘
+   404 se não existe              │
+                                  ▼
+                       ┌──────────────────────┐
+                       │  Prediction          │
+                       │  Repository (out)    │
+                       │  save()              │
+                       └──────────┬───────────┘
+                                  │
+                                  ▼
+                           Response 201
+                       { predictionId, riskScore,
+                         riskLevel, explanation,
+                         forecastHours, createdAt }
+```
 
 ---
 
