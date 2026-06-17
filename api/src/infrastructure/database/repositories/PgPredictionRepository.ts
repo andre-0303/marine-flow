@@ -1,10 +1,10 @@
-import { pool } from '../connection.js'
+import { getPool } from '../connection.js'
 import type { PredictionRepository } from '../../../domain/ports/out/PredictionRepository.js'
 import { Prediction, type RiskLevel, type ForecastHours } from '../../../domain/entities/Prediction.js'
 
 export class PgPredictionRepository implements PredictionRepository {
   async save(prediction: Prediction): Promise<void> {
-    await pool.query(
+    await getPool().query(
       `INSERT INTO prediction
         (id, beach_region_id, ocean_condition_id, risk_score, risk_level, explanation, forecast_hours, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -22,7 +22,7 @@ export class PgPredictionRepository implements PredictionRepository {
   }
 
   async findByBeachRegion(beachRegionId: string): Promise<Prediction[]> {
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM prediction WHERE beach_region_id = $1 ORDER BY created_at DESC',
       [beachRegionId],
     )
