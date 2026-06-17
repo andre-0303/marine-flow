@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="300" alt="image" src="https://github.com/user-attachments/assets/20cdb468-7d4e-4c18-a562-d03944f8c950" />
+  <img width="300" alt="image" src="./assets/logo.png" />
 
   <p><strong>Plataforma preditiva de monitoramento costeiro</strong></p>
   <p>Previsão de acúmulo de resíduos marinhos no litoral do Rio de Janeiro</p>
