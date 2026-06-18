@@ -1,16 +1,16 @@
-import { pool } from '../connection.js'
+import { getPool } from '../connection.js'
 import type { BeachRegionRepository } from '../../../domain/ports/out/BeachRegionRepository.js'
 import { BeachRegion, type BeachRegionStatus } from '../../../domain/entities/BeachRegion.js'
 
 export class PgBeachRegionRepository implements BeachRegionRepository {
   async findById(id: string): Promise<BeachRegion | null> {
-    const { rows } = await pool.query('SELECT * FROM beach_region WHERE id = $1', [id])
+    const { rows } = await getPool().query('SELECT * FROM beach_region WHERE id = $1', [id])
     if (rows.length === 0) return null
     return toEntity(rows[0])
   }
 
   async findAll(): Promise<BeachRegion[]> {
-    const { rows } = await pool.query('SELECT * FROM beach_region ORDER BY name')
+    const { rows } = await getPool().query('SELECT * FROM beach_region ORDER BY name')
     return rows.map(toEntity)
   }
 }

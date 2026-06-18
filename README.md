@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="300" alt="image" src="https://github.com/user-attachments/assets/20cdb468-7d4e-4c18-a562-d03944f8c950" />
+  <img width="300" alt="image" src="./assets/logo.png" />
 
   <p><strong>Plataforma preditiva de monitoramento costeiro</strong></p>
   <p>Previsão de acúmulo de resíduos marinhos no litoral do Rio de Janeiro</p>
@@ -74,19 +74,7 @@ api/src/
 
 ## 📐 Modelagem de dados
 
-```text
-beach_region                  1 ───────────────<  ocean_condition              1 ───────────────<  prediction
-┌──────────────────────┐                         ┌─────────────────────────┐                         ┌──────────────────────┐
-│ PK id                │                         │ PK id                   │                         │ PK id                │
-│ name                 │                         │ FK beach_region_id      │                         │ FK beach_region_id   │
-│ latitude             │                         │ wind_speed              │                         │ FK ocean_condition_id│
-│ longitude            │                         │ current_strength        │                         │ risk_score (0-100)   │
-│ city                 │                         │ tide_level              │                         │ risk_level           │
-│ status               │                         │ pollution_density       │                         │ explanation          │
-└──────────────────────┘                         │ created_at              │                         │ forecast_hours       │
-                                                  └─────────────────────────┘                         │ created_at           │
-                                                                                                     └──────────────────────┘
-```
+<img width="900" alt="image" src="./assets/modeling.png" />
 
 ---
 
@@ -111,10 +99,10 @@ score = round( windScore×0.20 + currentScore×0.30 + tideScore×0.30 + pollutio
 ┌─────────────────────┬────────────────────────────────────────────┬────────┐
 │ Fator               │ Normalização (0–100)                       │ Peso   │
 ├─────────────────────┼────────────────────────────────────────────┼────────┤
-│ windScore           │ clamp(windSpeed / 30,      0, 1) × 100    │  20%   │
-│ currentScore        │ clamp(currentStrength / 5, 0, 1) × 100    │  30%   │
-│ tideScore           │ clamp(max(0, tideLevel) / 3, 0, 1) × 100  │  30%   │
-│ pollutionScore      │ clamp(pollutionDensity / 100, 0, 1) × 100 │  20%   │
+│ windScore           │ clamp(windSpeed / 30,      0, 1) × 100     │  20%   │
+│ currentScore        │ clamp(currentStrength / 5, 0, 1) × 100     │  30%   │
+│ tideScore           │ clamp(max(0, tideLevel) / 3, 0, 1) × 100   │  30%   │
+│ pollutionScore      │ clamp(pollutionDensity / 100, 0, 1) × 100  │  20%   │
 └─────────────────────┴────────────────────────────────────────────┴────────┘
 
 Fatores com score ≥ 50 são listados na explicação gerada (máx. 2 dominantes).
@@ -125,9 +113,9 @@ Fatores com score ≥ 50 são listados na explicação gerada (máx. 2 dominante
 ## 🔄 Fluxo de simulação
 
 ```text
-POST /simulations
-        │
-        ▼
+   POST /simulations
+          │
+          ▼
 ┌───────────────────────┐
 │  SimulationController │  valida e adapta HTTP → domínio
 └──────────┬────────────┘
@@ -139,10 +127,10 @@ POST /simulations
    │                    │
    ▼                    ▼
 ┌──────────────────┐  ┌────────────────────────┐
-│ BeachRegion      │  │  RiskCalculatorService  │
-│ Repository (out) │  │  (serviço de domínio)   │
-│                  │  │  → score + level +       │
-│ findById()       │  │    explanation           │
+│ BeachRegion      │  │  RiskCalculatorService │
+│ Repository (out) │  │  (serviço de domínio)  │
+│                  │  │  → score + level +     │
+│ findById()       │  │    explanation         │
 └──────────────────┘  └───────────┬────────────┘
    404 se não existe              │
                                   ▼

@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Ocean */
+  --color-ocean-900: #042c53;
+  --color-ocean-700: #185fa5;
+  --color-ocean-500: #378add;
+  --color-ocean-200: #b5d4f4;
+  --color-ocean-50:  #eaf5fb;
+
+  /* Teal (low risk) */
+  --color-teal-700: #0f6e56;
+  --color-teal-500: #1d9e75;
+  --color-teal-200: #5dcaa5;
+  --color-teal-50:  #e1f5ee;
+
+  /* Risk / Red (high risk) */
+  --color-risk-600: #a32d2d;
+  --color-risk-400: #e24b4a;
+  --color-risk-50:  #fcebeb;
+
+  /* Warning / Amber (medium risk) */
+  --color-warn-600: #ba7517;
+  --color-warn-400: #ef9f27;
+  --color-warn-50:  #faeeda;
+
+  /* Text */
+  --color-text-primary:   #0c1f3a;
+  --color-text-secondary: #5a7a99;
+  --color-text-muted:     #94a3b8;
+
+  /* Border */
+  --color-border-subtle: #d6eaf8;
+
+  /* Background */
+  --color-bg-page: #f0f4f8;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0;
+  height: 0;
+}
+input[type='range']::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  border: none;
+  background: transparent;
+}
