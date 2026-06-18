@@ -103,7 +103,7 @@ export default function SimulationPage() {
   const riskCfg = result ? RISK_CONFIG[result.riskLevel] : null
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#f0f4f8' }}>
+    <div className="flex h-screen overflow-hidden bg-[#f0f4f8]">
       <Sidebar
         regions={regions}
         selectedId={selectedRegionId}
@@ -180,15 +180,17 @@ export default function SimulationPage() {
 
               {/* Region select — visible on mobile since sidebar is hidden */}
               <div className="lg:hidden">
-                <label className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
+                <label htmlFor="region-select" className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
                   Região Costeira
                 </label>
                 <select
+                  id="region-select"
                   value={selectedRegionId}
                   onChange={e => setSelectedRegionId(e.target.value)}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2"
                   style={{ color: '#374151', backgroundColor: '#f8fafc' }}
                 >
+                  <option value="" disabled>Selecione uma região</option>
                   {regions.map(r => (
                     <option key={r.id} value={r.id}>{r.name} — {r.city}</option>
                   ))}
@@ -478,10 +480,11 @@ interface SliderFieldProps {
 
 function SliderField({ label, value, min, max, unit, trackColor, onChange }: SliderFieldProps) {
   const pct = ((value - min) / (max - min)) * 100
+  const id = `slider-${label.toLowerCase().replace(/\s+/g, '-')}`
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <label className="text-sm font-medium" style={{ color: '#374151' }}>{label}</label>
+        <label htmlFor={id} className="text-sm font-medium" style={{ color: '#374151' }}>{label}</label>
         <span className="text-sm font-semibold tabular-nums" style={{ color: trackColor }}>
           {value} {unit}
         </span>
@@ -492,6 +495,7 @@ function SliderField({ label, value, min, max, unit, trackColor, onChange }: Sli
           style={{ width: `${pct}%`, backgroundColor: trackColor }}
         />
         <input
+          id={id}
           type="range"
           min={min}
           max={max}
