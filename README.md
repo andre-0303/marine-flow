@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Fastify-4.x-000000?style=flat-square&logo=fastify&logoColor=white" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white" />
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white" />
 </div>
 
@@ -189,10 +189,18 @@ Fatores com score ≥ 50 são listados na explicação gerada (máx. 2 dominante
 ### Pré-requisitos
 
 - [Node.js 18+](https://nodejs.org/)
-- [pnpm 9+](https://pnpm.io/)
-- [Docker](https://www.docker.com/) e Docker Compose
+- [pnpm 9+](https://pnpm.io/) — instale com `npm install -g pnpm` se não tiver
+- [Docker](https://www.docker.com/) e Docker Compose — precisa estar **em execução** antes do passo 3
 
-### 1. Clone o repositório
+Confira as versões instaladas:
+
+```bash
+node -v
+pnpm -v
+docker -v
+```
+
+### 1. Baixe o projeto (clone)
 
 ```bash
 git clone https://github.com/andre-0303/marine-flow.git
@@ -204,6 +212,8 @@ cd marine-flow
 ```bash
 cp .env.example .env
 ```
+
+O arquivo `.env` controla a `DATABASE_URL` usada pela API — os valores padrão já funcionam com o `docker-compose.yml` deste projeto, sem precisar editar nada.
 
 ### 3. Suba o banco de dados
 
@@ -223,13 +233,27 @@ pnpm install
 pnpm dev:api
 ```
 
-### 6. Rode o frontend
+### 6. Rode o frontend (em outro terminal)
 
 ```bash
 pnpm dev:web
 ```
 
+### 7. Verifique se funcionou
+
+- API: `curl http://localhost:3333/health` deve responder com status `ok`
+- Frontend: abra [http://localhost:5173](http://localhost:5173) no navegador
+
 A API estará disponível em `http://localhost:3333` e o frontend em `http://localhost:5173`.
+
+### Problemas comuns
+
+| Sintoma | Causa provável | Solução |
+|---|---|---|
+| `ECONNREFUSED` ao chamar a API | Banco de dados não está de pé | Verifique `docker ps` e rode `docker-compose up -d` |
+| Porta `3333` ou `5173` já em uso | Outro processo usando a porta | Encerre o processo ou altere a porta em `vite.config.ts` / `.env` |
+| `pnpm: command not found` | pnpm não instalado globalmente | `npm install -g pnpm` |
+| Frontend não pega cor/estilo novo | Cache do Vite após editar `tailwind.config.js` | Reinicie `pnpm dev:web` |
 
 ---
 
