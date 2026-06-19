@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url'
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') })
 
 import Fastify from 'fastify'
+import swagger from '@fastify/swagger'
+import swaggerUi from '@fastify/swagger-ui'
 import { PgBeachRegionRepository } from './infrastructure/database/repositories/PgBeachRegionRepository.js'
 import { PgOceanConditionRepository } from './infrastructure/database/repositories/PgOceanConditionRepository.js'
 import { PgPredictionRepository } from './infrastructure/database/repositories/PgPredictionRepository.js'
@@ -52,8 +54,93 @@ app.setErrorHandler((error, _req, reply) => {
   return reply.status(500).send({ error: 'Internal server error' })
 })
 
+// --- Swagger ---
+app.register(swagger, {
+  openapi: {
+    openapi: '3.0.0',
+    info: {
+      title: 'MarineFlow API',
+      description: 'Plataforma preditiva de monitoramento costeiro — previsão de acúmulo de resíduos marinhos no litoral do Rio de Janeiro.',
+      version: '1.0.0',
+    },
+    tags: [
+      { name: 'Health', description: 'Verificação de disponibilidade da API' },
+      { name: 'Beach Regions', description: 'Regiões costeiras monitoradas' },
+      { name: 'Simulations', description: 'Simulações de risco e histórico de predições' },
+    ],
+  },
+})
+
+app.register(swaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: { docExpansion: 'list', deepLinking: false },
+})
+
+// --- Shared schemas ---
+app.addSchema({
+  $id: 'BeachRegion',
+  type: 'object',
+  properties: {
+    id: { type: 'string', format: 'uuid' },
+    name: { type: 'string' },
+    latitude: { type: 'number' },
+    longitude: { type: 'number' },
+    city: { type: 'string' },
+    status: { type: 'string', enum: ['active', 'inactive'] },
+  },
+})
+
+app.addSchema({
+  $id: 'Prediction',
+  type: 'object',
+  properties: {
+    id: { type: 'string', format: 'uuid' },
+    beachRegionId: { type: 'string', format: 'uuid' },
+    oceanConditionId: { type: 'string', format: 'uuid' },
+    riskScore: { type: 'number', minimum: 0, maximum: 100 },
+    riskLevel: { type: 'string', enum: ['low', 'medium', 'high'] },
+    explanation: { type: 'string' },
+    forecastHours: { type: 'number', enum: [24, 48, 72] },
+    createdAt: { type: 'string', format: 'date-time' },
+  },
+})
+
+app.addSchema({
+  $id: 'SimulationOutput',
+  type: 'object',
+  properties: {
+    predictionId: { type: 'string', format: 'uuid' },
+    beachRegionId: { type: 'string', format: 'uuid' },
+    riskScore: { type: 'number', minimum: 0, maximum: 100 },
+    riskLevel: { type: 'string', enum: ['low', 'medium', 'high'] },
+    explanation: { type: 'string' },
+    forecastHours: { type: 'number', enum: [24, 48, 72] },
+    createdAt: { type: 'string', format: 'date-time' },
+  },
+})
+
+app.addSchema({
+  $id: 'ApiError',
+  type: 'object',
+  properties: {
+    error: { type: 'string' },
+  },
+})
+
 // --- Routes ---
-app.get('/health', async () => ({ status: 'ok' }))
+app.get('/health', {
+  schema: {
+    tags: ['Health'],
+    summary: 'Health check',
+    response: {
+      200: {
+        type: 'object',
+        properties: { status: { type: 'string' } },
+      },
+    },
+  },
+}, async () => ({ status: 'ok' }))
+
 app.register(beachRegionRoutes, { controller: beachRegionController })
 app.register(simulationRoutes, { controller: simulationController })
 
