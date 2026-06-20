@@ -259,6 +259,46 @@ A API estará disponível em `http://localhost:3333` e o frontend em `http://loc
 
 ---
 
+## 🧪 Testes
+
+### Testes unitários
+
+Cobrem domínio e casos de uso sem banco de dados. Rodam em ~100ms.
+
+```bash
+pnpm --filter @marine-flow/api test
+```
+
+| Suite | Camada | Casos |
+|---|---|---|
+| `BeachRegion` | Domain — entidade | 14 |
+| `OceanCondition` | Domain — entidade | 8 |
+| `Prediction` | Domain — entidade | 15 |
+| `RiskCalculatorService` | Domain — serviço | 12 |
+| `CreateSimulationUseCase` | Application | 6 |
+| `GetPredictionHistoryUseCase` | Application | 5 |
+
+### Testes E2E
+
+Testam a stack completa via HTTP (Fastify `inject`) com banco de dados real. Requerem PostgreSQL em execução.
+
+```bash
+# certifique-se que o banco está no ar
+docker compose up -d
+
+pnpm --filter @marine-flow/api test:e2e
+```
+
+| Suite | Endpoint | Casos |
+|---|---|---|
+| `health` | `GET /health` | 1 |
+| `beachRegions` | `GET /beach-regions` | 2 |
+| `simulations` | `POST /simulations` + `GET /simulations/:id/history` | 11 |
+
+Os testes E2E criam e removem automaticamente dados de teste no banco (usando UUID fixo `00000000-0000-0000-0000-0000000000e2`). Dados de produção não são afetados.
+
+---
+
 ## 📁 Estrutura do monorepo
 
 ```
